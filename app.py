@@ -1,18 +1,13 @@
 from flask import Flask, request, jsonify
 import tensorflow as tf
-from tensorflow.keras.preprocessing import image # type: ignore
+from tensorflow.keras.preprocessing import image  # type: ignore
 import numpy as np
 import io
 from PIL import Image
 import os
 
-tf.config.set_visible_devices([], 'GPU') 
-
-# Limitar o uso de memória da GPU para evitar erro no alocamento da api no render
-# physical_devices = tf.config.list_physical_devices('GPU')
-# if physical_devices:
-#     for device in physical_devices:
-#         tf.config.experimental.set_memory_growth(device, True)
+# Limitar o uso de memória na CPU (não usar a GPU no Render)
+tf.config.set_visible_devices([], 'GPU')
 
 # Carrega o modelo salvo
 model = tf.keras.models.load_model('TCC_3_classes_vgg16_model_tl.h5')
@@ -28,9 +23,9 @@ def predict():
     if file.filename == '':
         return jsonify({"error": "No file selected"}), 400
 
-    # Carrega e processa a imagem
+    # Carrega e processa a imagem com redução de tamanho para otimizar o uso de memória
     img = Image.open(io.BytesIO(file.read()))  # Carrega a imagem diretamente do conteúdo do arquivo
-    img = img.resize((224, 224))  # Redimensiona para o tamanho esperado pelo modelo
+    img = img.resize((128, 128))  # Reduz o tamanho para 128x128 para reduzir o uso de memória
     img_array = image.img_to_array(img)
     img_array = np.expand_dims(img_array, axis=0)  # Adiciona uma dimensão para o batch
     img_array /= 255.0  # Normaliza os pixels para o intervalo [0, 1]
