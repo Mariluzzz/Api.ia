@@ -4,6 +4,7 @@ from tensorflow.keras.preprocessing import image # type: ignore
 import numpy as np
 import io
 from PIL import Image
+import os
 
 tf.config.set_visible_devices([], 'GPU') 
 
@@ -48,4 +49,5 @@ def predict():
     return jsonify(response)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))  # Pega a variável de ambiente 'PORT' ou usa 5000 como padrão
+    app.run(host="0.0.0.0", port=port, debug=True)
