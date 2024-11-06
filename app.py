@@ -1,15 +1,17 @@
 from flask import Flask, request, jsonify
 import tensorflow as tf
-from tensorflow.keras.preprocessing import image
+from tensorflow.keras.preprocessing import image # type: ignore
 import numpy as np
 import io
 from PIL import Image
 
+tf.config.set_visible_devices([], 'GPU') 
+
 # Limitar o uso de memória da GPU para evitar erro no alocamento da api no render
-physical_devices = tf.config.list_physical_devices('GPU')
-if physical_devices:
-    for device in physical_devices:
-        tf.config.experimental.set_memory_growth(device, True)
+# physical_devices = tf.config.list_physical_devices('GPU')
+# if physical_devices:
+#     for device in physical_devices:
+#         tf.config.experimental.set_memory_growth(device, True)
 
 # Carrega o modelo salvo
 model = tf.keras.models.load_model('TCC_3_classes_vgg16_model_tl.h5')
