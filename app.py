@@ -5,6 +5,12 @@ import numpy as np
 import io
 from PIL import Image
 
+# Limitar o uso de memória da GPU para evitar erro no alocamento da api no render
+physical_devices = tf.config.list_physical_devices('GPU')
+if physical_devices:
+    for device in physical_devices:
+        tf.config.experimental.set_memory_growth(device, True)
+
 # Carrega o modelo salvo
 model = tf.keras.models.load_model('TCC_3_classes_vgg16_model_tl.h5')
 
